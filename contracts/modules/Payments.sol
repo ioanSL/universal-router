@@ -37,6 +37,19 @@ abstract contract Payments is PaymentsImmutables {
         }
     }
 
+    /// @notice Pays an amount of ETH or ERC20 to a recipient
+    /// @param token The token to pay (can be ETH using Constants.ETH)
+    /// @param payer The address that will pay
+    /// @param recipient The address that will receive the payment
+    /// @param value The amount to pay
+    function payFrom(address token, address payer, address recipient, uint256 value) internal {
+        if (value == Constants.CONTRACT_BALANCE) {
+            value = ERC20(token).balanceOf(address(this));
+        }
+
+        ERC20(token).safeTransferFrom(payer, recipient, value);
+    }
+
     /// @notice Approves a protocol to spend ERC20s in the router
     /// @param token The token to approve
     /// @param spender Which protocol to approve
